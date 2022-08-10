@@ -4,10 +4,10 @@
  */
 package Controler;
 
+import Config.utilitarios;
+import Interoperabilidad.ConsultaPersonas;
 import Model.Cliente;
 import ModelDAO.ClienteDAO;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -20,12 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 
 /**
@@ -117,12 +112,14 @@ public class ClienteServlet extends HttpServlet {
             }          
             RequestDispatcher vista= request.getRequestDispatcher(editClientePage);
             vista.forward(request,response);
-        }else if(action.equalsIgnoreCase("buscarCedula")){           
-            try{
-            
-            }catch(){
-            
-            }
+        }else if(action.equalsIgnoreCase("ConsultaPersona")){
+            String cedula = (String) request.getParameter("cedula");
+            ConsultaPersonas _consultaPersona = new ConsultaPersonas();
+            String nombre = _consultaPersona.obtenerNombreAPI(cedula);
+            request.setAttribute("nombre", utilitarios.nlv(nombre));
+            request.setAttribute("cedula", utilitarios.nlv(cedula));
+            RequestDispatcher vista= request.getRequestDispatcher(addClientePage);
+            vista.forward(request,response);
         }
     }
 
@@ -193,49 +190,7 @@ public class ClienteServlet extends HttpServlet {
 
     
     
-    public class cedulaCliente{
-        public List<Cliente> listCliente(){
-            Response response =null;
-            WebTarget webTarget;
-            Client client = ClientBuilder.newClient();
-            List<Cliente> list = null;
-            String responseJson = null;
-            ObjectMapper objectMapper = new ObjectMapper();
-            
-            try{
-                webTarget = client.target("https://apis.gometa.org/cedulas/" + "cedula");
-                Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-                response = invocationBuilder.get();
-                
-                System.out.println("Status " + response.getStatus());
-                
-                if(response.getStatus()!=200){
-                    throw new RuntimeException("Failed: HTTP error code: " + response.getStatus());
-                }
-                
-                responseJson = response.readEntity(String.class);
-                
-                //list = objectMapper.readValue(responseJson, new TypeReference<List<Cliente>>(){});
-            
-            }catch(Exception e){
-            
-                System.out.println("Error: " + e.getMessage());
-                
-            }/*finally{
-                if(response !=null){
-                    response.close();
-                }
-                if(client != null){
-                    client.close();
-                }
-            }*/
-            
-            return list;
-        }
-
-      
     
-    }
     
     
 }

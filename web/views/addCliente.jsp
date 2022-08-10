@@ -4,8 +4,19 @@
     Author     : bcamacho
 --%>
 
+<%@page import="Config.utilitarios"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<%
+    String _nombre=(String)request.getAttribute("nombre"); 
+    String _cedula=(String)request.getAttribute("cedula");
+    String _escribirNombre = "false";
+    
+if(utilitarios.nlv(_nombre).equals("No se encontraron datos"))
+   _escribirNombre= "";  
+    else
+    _escribirNombre="readonly";
+%>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -19,12 +30,14 @@
             <table>  
                 <tr>
                     <td>Cédula:</td>
-                    <td><input type="text" name="cedula"/>Buscar</td>                    
+                    <td><input type="text" name="cedula" value="<%=utilitarios.nlv(_cedula)%>"/>
+                    <button type="submit">Consulta Persona</button>
+                    </td>
                 </tr>
                 <tr>
                     <td>Nombre Completo:</td>
                     <td>
-                        <input type="text" name="nombre" value="<%%>"/>
+                        <input type="text" name="nombre" <%=_escribirNombre%> value="<%=utilitarios.nlv(_nombre)%>"/>
                  </td>                    
                 </tr>
                 <tr>
@@ -49,8 +62,9 @@
                 </tr>
                 <tr>
                     <td colspan="2">                      
-                          <input type="hidden" name="accion" value="addCliente"/>
-                         <button type="submit">Incluir cliente</button>
+                          <input type="hidden" name="accion" value="ConsultaPersona"/>
+                          <a href="ClienteServlet?accion=addCliente">Guardar Cliente</a>
+                         
                     
                 </tr>
             </table>
